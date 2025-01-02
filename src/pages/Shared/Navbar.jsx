@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { ShoppingCartIcon, UserIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 
 const Navbar = ({ isLoggedIn, userName }) => {
@@ -18,7 +19,10 @@ const Navbar = ({ isLoggedIn, userName }) => {
         {/* Desktop Navigation Links */}
         <ul className="hidden md:flex space-x-6 items-center">
           <li>
-            <a href="/" className="hover:text-yellow-500">Home</a>
+            <Link to="/" className="hover:text-yellow-500">Home</Link>
+          </li>
+          <li>
+            <Link to="/menu" className="hover:text-yellow-500">Our Menu</Link>
           </li>
           <li>
             <a href="/contact" className="hover:text-yellow-500">Contact Us</a>
