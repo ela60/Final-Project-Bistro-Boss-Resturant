@@ -25,8 +25,14 @@ const Navbar = ({ isLoggedIn, userName }) => {
             <Link to="/menu" className="hover:text-yellow-500">Our Menu</Link>
           </li>
           <li>
-            <a href="/contact" className="hover:text-yellow-500">Contact Us</a>
+            <Link to="/order/salad" className="hover:text-yellow-500">Order</Link>
           </li>
+          <li>
+            <Link to="/login" className="hover:text-yellow-500">Login</Link>
+          </li>
+          {/* <li>
+            <a href="/contact" className="hover:text-yellow-500">Contact Us</a>
+          </li> */}
           <li>
             <a href="/dashboard" className="hover:text-yellow-500">Dashboard</a>
           </li>
