@@ -69,7 +69,7 @@ const Dashboard = () => {
             </div>
 
             {/* Dashboard Content */}
-            <div className='flex-1'>
+            <div className='flex-1 p-8'>
                 <Outlet /> {/* Render matched child route */}
             </div>
         </div>
