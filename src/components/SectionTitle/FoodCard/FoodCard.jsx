@@ -2,19 +2,21 @@ import React from "react";
 import useAuth from "../../../hooks/useAuth";
 import Swal from 'sweetalert2';
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";  // ✅ Import axios for API calls
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import axios from "axios"; // Use axios if no specific secure axios is needed
+import useAxiosSecure from "../../../hooks/useAxiosSecure"; // Use secure axios hook
+import useCart from "../../../hooks/useCart";
 
 const FoodCard = ({ item }) => {
-  const { image, name, price, recipe, _id } = item; // ✅ Destructure _id for menuId
+  const { image, name, price, recipe, _id } = item; // Destructure _id for menuId
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const axiosSecure = useAxiosSecure();
+  const axiosSecure = useAxiosSecure(); 
+  const [, ,refetch] = useCart(); 
 
   const handleAddToCart = (food) => {
     if (user && user.email) {
-      // ✅ Prepare cart item
+      // Prepare cart item
       const cartItem = {
         menuId: _id,
         email: user.email,
@@ -22,12 +24,12 @@ const FoodCard = ({ item }) => {
         image,
         price,
       };
-
-      // ✅ Send cart item to the database
-      axios.post('http://localhost:5000/carts', cartItem)
+  
+      // Send cart item to the database
+      axiosSecure.post('http://localhost:5000/carts', cartItem)
         .then((res) => {
           if (res.data.insertedId) {
-            // ✅ Show success alert
+            // Show success alert
             Swal.fire({
               icon: 'success',
               title: 'Added to Cart!',
@@ -35,10 +37,12 @@ const FoodCard = ({ item }) => {
               timer: 1500,
               showConfirmButton: false,
             });
+           
+            refetch(); 
           }
         })
         .catch((error) => {
-          // ❌ Handle error
+          // Handle error and show a message
           Swal.fire({
             icon: 'error',
             title: 'Error!',
@@ -46,9 +50,8 @@ const FoodCard = ({ item }) => {
           });
           console.error('Error adding to cart:', error);
         });
-
     } else {
-      // ⚠️ Not logged in - show warning and redirect
+      // If user is not logged in, show warning and redirect to login
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In!',
@@ -58,11 +61,12 @@ const FoodCard = ({ item }) => {
         cancelButtonText: 'Cancel'
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate('/login', { state: { from: location.pathname } });  // ✅ Redirect to login
+          navigate('/login', { state: { from: location.pathname } });  // Redirect to login page
         }
       });
     }
   };
+  
 
   return (
     <div>

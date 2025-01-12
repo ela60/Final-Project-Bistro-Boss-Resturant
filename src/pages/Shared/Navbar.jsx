@@ -2,10 +2,12 @@ import React, { useContext, useState } from "react";
 import { ShoppingCartIcon, UserIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
+import useCart from "../../hooks/useCart";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logOut } = useContext(AuthContext); // Get user and logOut from context
+  const [cart] = useCart();
 
   const handleLogOut = () => {
     logOut()
@@ -54,9 +56,9 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/cart" className="relative hover:text-yellow-500">
+              <Link to="/dashboard/cart" className="relative hover:text-yellow-500">
                 <ShoppingCartIcon className="h-6 w-6 inline-block" />
-                <span className="absolute -top-2 -right-2 bg-yellow-500 text-xs rounded-full px-1">2</span>
+                <span className="absolute -top-2 -right-2 bg-yellow-500 text-xs rounded-full px-1">{cart.length}</span>
               </Link>
             </li>
             <li>

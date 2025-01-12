@@ -1,4 +1,4 @@
-import React, { StrictMode } from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
@@ -6,10 +6,8 @@ import { router } from "./Routes/Router";
 import { HelmetProvider } from "react-helmet-async";
 import AuthProvider from "./providers/AuthProvider";
 
-import {
-  QueryClient,
-  QueryClientProvider
-} from "@tanstack/react-router";
+// ✅ Corrected Import for React Query
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
