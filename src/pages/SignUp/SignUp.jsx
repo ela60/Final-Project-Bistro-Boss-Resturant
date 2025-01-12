@@ -1,25 +1,36 @@
-import React, { useContext } from "react";
-import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form";
-import { AuthContext } from "../../providers/AuthProvider";
+import React, { useContext } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useForm } from 'react-hook-form';
+import { AuthContext } from '../../providers/AuthProvider';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  const { createUser } = useContext(AuthContext);
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { createUser, signInWithGoogle } = useContext(AuthContext);
+  const navigate = useNavigate(); // Initialize navigate for redirection
 
   const onSubmit = (data) => {
     createUser(data.email, data.password)
       .then((result) => {
         const loggedUser = result.user;
-        console.log("User created successfully:", loggedUser);
+        console.log('User created successfully:', loggedUser);
       })
       .catch((error) => {
-        console.error("Error creating user:", error.message);
+        console.error('Error creating user:', error.message);
+      });
+  };
+
+  // Google Sign-In Handler
+  const handleGoogleSignIn = () => {
+    signInWithGoogle()
+      .then((result) => {
+        const loggedUser = result.user;
+        console.log('Google user signed in:', loggedUser);
+        // Navigate to the home page after successful login
+        navigate('/'); // Redirect to the home page
+      })
+      .catch((error) => {
+        console.error('Google sign-in error:', error.message);
       });
   };
 
@@ -46,13 +57,11 @@ const SignUp = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("name", { required: true })}
+                  {...register('name', { required: true })}
                   placeholder="Write your name"
                   className="input input-bordered"
                 />
-                {errors.name && (
-                  <span className="text-red-600">Name is required</span>
-                )}
+                {errors.name && <span className="text-red-600">Name is required</span>}
               </div>
 
               {/* Email Input */}
@@ -62,13 +71,11 @@ const SignUp = () => {
                 </label>
                 <input
                   type="email"
-                  {...register("email", { required: true })}
+                  {...register('email', { required: true })}
                   placeholder="Email"
                   className="input input-bordered"
                 />
-                {errors.email && (
-                  <span className="text-red-600">Email is required</span>
-                )}
+                {errors.email && <span className="text-red-600">Email is required</span>}
               </div>
 
               {/* Password Input */}
@@ -78,7 +85,7 @@ const SignUp = () => {
                 </label>
                 <input
                   type="password"
-                  {...register("password", {
+                  {...register('password', {
                     required: true,
                     minLength: 6,
                     maxLength: 20,
@@ -87,41 +94,31 @@ const SignUp = () => {
                   placeholder="Password"
                   className="input input-bordered"
                 />
-                {errors.password?.type === "required" && (
-                  <p className="text-red-600">Password is required</p>
-                )}
-                {errors.password?.type === "minLength" && (
-                  <p className="text-red-600">
-                    Password must be at least 6 characters
-                  </p>
-                )}
-                {errors.password?.type === "maxLength" && (
-                  <p className="text-red-600">
-                    Password must be less than 20 characters
-                  </p>
-                )}
-                {errors.password?.type === "pattern" && (
-                  <p className="text-red-600">
-                    Password must contain at least one uppercase letter, one
-                    lowercase letter, one number, and one special character
-                  </p>
-                )}
-                <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">
-                    Forgot password?
-                  </a>
-                </label>
+                {errors.password?.type === 'required' && <p className="text-red-600">Password is required</p>}
+                {errors.password?.type === 'minLength' && <p className="text-red-600">Password must be at least 6 characters</p>}
+                {errors.password?.type === 'maxLength' && <p className="text-red-600">Password must be less than 20 characters</p>}
+                {errors.password?.type === 'pattern' && <p className="text-red-600">Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character</p>}
               </div>
 
               {/* Submit Button */}
               <div className="form-control mt-6">
-                <input
-                  className="btn btn-primary"
-                  type="submit"
-                  value="Sign Up"
-                />
+                <input className="btn btn-primary" type="submit" value="Sign Up" />
+              </div>
+
+              {/* Google Sign-In Button */}
+              <div className="form-control mt-3">
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  className="btn btn-outline btn-secondary"
+                >
+                  Sign Up with Google
+                </button>
               </div>
             </form>
+            <p className="p-2 text-blue-700">
+              Already have an account? <Link to="/login">Login</Link>
+            </p>
           </div>
         </div>
       </div>
