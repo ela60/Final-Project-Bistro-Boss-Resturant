@@ -7,13 +7,16 @@ import {
 import { AuthContext } from "../../providers/AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { FaGoogle } from "react-icons/fa"; // Google Icon
+import useAxiousPublic from "../../hooks/useAxiousPublic";
 
 const Login = () => {
   const [disable, setDisable] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const { signIn } = useContext(AuthContext);
+  const { signIn, signInWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const axiosPublic = useAxiousPublic();
 
   const from = location.state?.pathname || "/";
 
@@ -22,20 +25,48 @@ const Login = () => {
   }, []);
 
   const handleLogin = (event) => {
-    event.preventDefault(); // Prevent form default behavior
+    event.preventDefault();
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
 
-    // Attempt to log in
     signIn(email, password)
       .then((result) => {
         const user = result.user;
         console.log("Logged in successfully:", user);
+        navigate(from, { replace: true });
       })
       .catch((error) => {
         console.error("Login failed:", error);
         setErrorMessage("Login failed. Please check your credentials.");
+      });
+  };
+
+  const handleGoogleSignIn = () => {
+    signInWithGoogle()
+      .then((result) => {
+        const user = result.user;
+        console.log("Google Sign-In successful:", user);
+
+        // Save user to the database
+        const saveUser = {
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+        };
+
+        axiosPublic.post("/users", saveUser)
+          .then(() => {
+            console.log("User saved to database");
+            navigate(from, { replace: true });
+          })
+          .catch((error) => {
+            console.error("Error saving user:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Google Sign-In error:", error);
+        setErrorMessage("Google Sign-In failed. Please try again.");
       });
   };
 
@@ -127,10 +158,21 @@ const Login = () => {
               </div>
             </form>
 
+            {/* Google Sign-In Button */}
+            <div className="form-control mt-3 px-8">
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                className="btn btn-outline btn-secondary flex items-center justify-center gap-2"
+              >
+                <FaGoogle /> Sign In with Google
+              </button>
+            </div>
+
             {/* Sign Up Link */}
-            <p>
+            <p className="text-center my-4">
               <small>
-                New Here? <Link to="/signup">Create an account</Link>
+                New Here? <Link to="/signup" className="text-blue-600">Create an account</Link>
               </small>
             </p>
           </div>

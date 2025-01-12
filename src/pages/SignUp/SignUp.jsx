@@ -3,34 +3,60 @@ import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../providers/AuthProvider';
 import { Link, useNavigate } from 'react-router-dom';
+import useAxiousPublic from '../../hooks/useAxiousPublic';
+import Swal from 'sweetalert2';
+import { FaGoogle } from 'react-icons/fa';
 
 const SignUp = () => {
+  const axiosPublic = useAxiousPublic();
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { createUser, signInWithGoogle } = useContext(AuthContext);
-  const navigate = useNavigate(); // Initialize navigate for redirection
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
     createUser(data.email, data.password)
       .then((result) => {
         const loggedUser = result.user;
-        console.log('User created successfully:', loggedUser);
+        axiosPublic.post('/users', {
+          name: data.name,
+          email: data.email,
+          photoURL: data.photoURL
+        })
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'User Created',
+            text: 'Your account has been created successfully!'
+          });
+          navigate('/');
+        });
       })
       .catch((error) => {
-        console.error('Error creating user:', error.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message
+        });
       });
   };
 
-  // Google Sign-In Handler
   const handleGoogleSignIn = () => {
     signInWithGoogle()
       .then((result) => {
         const loggedUser = result.user;
-        console.log('Google user signed in:', loggedUser);
-        // Navigate to the home page after successful login
-        navigate('/'); // Redirect to the home page
+        Swal.fire({
+          icon: 'success',
+          title: 'Signed In',
+          text: 'Successfully signed in with Google!'
+        });
+        navigate('/');
       })
       .catch((error) => {
-        console.error('Google sign-in error:', error.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message
+        });
       });
   };
 
@@ -44,13 +70,10 @@ const SignUp = () => {
         <div className="hero-content flex-col lg:flex-row-reverse">
           <div className="text-center lg:text-left">
             <h1 className="text-5xl font-bold">Sign up!</h1>
-            <p className="py-6">
-              Join us to explore amazing features. Sign up now to get started!
-            </p>
+            <p className="py-6">Join us to explore amazing features. Sign up now to get started!</p>
           </div>
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
             <form onSubmit={handleSubmit(onSubmit)} className="card-body">
-              {/* Name Input */}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Name</span>
@@ -64,7 +87,19 @@ const SignUp = () => {
                 {errors.name && <span className="text-red-600">Name is required</span>}
               </div>
 
-              {/* Email Input */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Photo URL</span>
+                </label>
+                <input
+                  type="text"
+                  {...register('photoURL', { required: true })}
+                  placeholder="Photo URL"
+                  className="input input-bordered"
+                />
+                {errors.photoURL && <span className="text-red-600">Photo URL is required</span>}
+              </div>
+
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Email</span>
@@ -78,7 +113,6 @@ const SignUp = () => {
                 {errors.email && <span className="text-red-600">Email is required</span>}
               </div>
 
-              {/* Password Input */}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Password</span>
@@ -100,19 +134,17 @@ const SignUp = () => {
                 {errors.password?.type === 'pattern' && <p className="text-red-600">Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character</p>}
               </div>
 
-              {/* Submit Button */}
-              <div className="form-control mt-6">
+              <div className="form-control mt-6 ">
                 <input className="btn btn-primary" type="submit" value="Sign Up" />
               </div>
 
-              {/* Google Sign-In Button */}
-              <div className="form-control mt-3">
+              <div className="form-control mt-3 ">
                 <button
                   type="button"
                   onClick={handleGoogleSignIn}
-                  className="btn btn-outline btn-secondary"
+                  className="btn btn-outline btn-secondary flex items-center justify-center gap-2"
                 >
-                  Sign Up with Google
+                 <FaGoogle /> Sign Up with Google
                 </button>
               </div>
             </form>

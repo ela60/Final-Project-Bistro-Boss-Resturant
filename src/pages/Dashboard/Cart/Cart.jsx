@@ -1,8 +1,8 @@
 import React from "react";
 import useCart from "../../../hooks/useCart";
 import { FaTrashAlt } from "react-icons/fa";
-import Swal from "sweetalert2";  // ✅ Import SweetAlert2
-import useAxiosSecure from "../../../hooks/useAxiosSecure";  // ✅ Secure Axios for DELETE request
+import Swal from "sweetalert2"; 
+import useAxiosSecure from "../../../hooks/useAxiosSecure"; 
 
 const Cart = () => {
   const [cart, , refetch] = useCart();  
@@ -25,7 +25,7 @@ const Cart = () => {
         axiosSecure.delete(`/carts/${id}`)
           .then((res) => {
             if (res.data.deletedCount > 0) {
-              refetch();  // ✅ Refresh cart data
+              refetch();  //
               Swal.fire(
                 'Deleted!',
                 'Your item has been removed.',
