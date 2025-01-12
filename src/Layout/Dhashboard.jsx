@@ -51,7 +51,7 @@ const Dashboard = () => {
 
                     {/* My Cart */}
                     <li className="flex items-center">
-                        <NavLink to='/dashboard/allUsers' className="flex items-center text-white">
+                        <NavLink to='/dashboard/users' className="flex items-center text-white">
                             <FaUsers className="mr-2" /> All Users
                         </NavLink>
                     </li>
