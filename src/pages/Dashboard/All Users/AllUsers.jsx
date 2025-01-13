@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { FaTrash, FaUsers } from "react-icons/fa"; 
+import { FaTrash, FaUsers } from "react-icons/fa";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 
@@ -20,6 +20,30 @@ const AllUsers = () => {
       return res.data;
     },
   });
+
+  // Handle Make Admin
+  const handleMakeAdmin = (userId) => {
+    const url = `/users/admin/${userId}`;
+    console.log("Request URL:", url); 
+    axiosSecure
+      .patch(url)
+        .then((response) => {
+          console.log(response);
+        if (response.data.
+            acknowledged
+            ) {
+          Swal.fire('Success', 'User has been promoted to Admin', 'success');
+          refetch(); 
+        } else {
+          Swal.fire('Error', 'Failed to promote user to admin.', 'error');
+        }
+      })
+      .catch((error) => {
+        Swal.fire('Error', 'An error occurred while promoting the user.', 'error');
+        console.error('Admin promotion error:', error.response ? error.response.data : error);
+      });
+  };
+  
 
   // Handle Delete User
   const handleDeleteUser = (id) => {
@@ -89,8 +113,18 @@ const AllUsers = () => {
                 <td className="border border-gray-300 px-4 py-2">
                   {user.email}
                 </td>
-                <td className="border  px-4 py-2 flex bg-orange-400 items-center justify-center ">
-                  {user.role || <FaUsers className="hover:text-orange-800" />}
+                <td className="border px-4 py-2 flex bg-orange-400 items-center justify-center">
+                  <button
+                    onClick={() => handleMakeAdmin(user._id)}
+                    disabled={user.role === "admin"}
+                    className="flex items-center space-x-2"
+                  >
+                    {user.role === "admin" ? (
+                      <span className="text-green-600">Admin</span>
+                    ) : (
+                      <FaUsers className="hover:text-orange-800" />
+                    )}
+                  </button>
                 </td>
 
                 <td className="border border-gray-300 px-4 py-2">

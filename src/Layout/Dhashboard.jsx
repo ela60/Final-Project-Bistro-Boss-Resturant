@@ -1,14 +1,15 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { FaCalendar, FaHome, FaShoppingCart, FaStar, FaCalendarCheck, FaUtensils, FaShoppingBag, FaPhoneAlt, FaList, FaUsers, FaBook } from 'react-icons/fa'; 
-import Cart from '../pages/Dashboard/Cart/Cart';
+
 import useCart from '../hooks/useCart';
+import useAdmin from '../hooks/useAdmin';
 
 const Dashboard = () => {
     const [cart] = useCart();
 
     // TODO:get isAdmin value from the database
-    const isAdmin = true;
+    const isAdmin = useAdmin();
 
 
     return (
